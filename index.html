@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Minecraft Dashboard</title>
+  <title>Mourn</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -15,7 +15,7 @@
 
   <!-- Header -->
   <header class="flex justify-between items-center px-6 py-4 shadow bg-white dark:bg-gray-800">
-    <h1 class="text-2xl font-bold">Minecraft Control Panel</h1>
+    <h1 class="text-2xl font-bold">Mourn</h1>
     <button onclick="toggleDarkMode()" class="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded">
       🌗 Toggle Dark Mode
     </button>
@@ -26,7 +26,7 @@
 
     <!-- 🟢 Server Status Card -->
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
-      <h2 class="text-xl font-bold mb-4">🟢 Server Status Checker</h2>
+      <h2 class="text-xl font-bold mb-4">Server Status Checker</h2>
       <input type="text" id="serverInput" placeholder="play.example.com" class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white mb-3" />
       <button onclick="fetchServerStatus()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg">Check Status</button>
       <div id="outputArea" class="mt-4 text-sm space-y-2"></div>
@@ -34,7 +34,7 @@
 
     <!-- 🟠 Skin Viewer Card -->
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
-      <h2 class="text-xl font-bold mb-4">🟠 Skin Viewer</h2>
+      <h2 class="text-xl font-bold mb-4">Skin Viewer</h2>
       <input type="text" id="skinInput" placeholder="Minecraft username" class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white mb-3" />
       <button onclick="showSkin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-lg">View Skin</button>
       <div id="skinOutput" class="mt-4 text-sm text-center"></div>
@@ -42,7 +42,7 @@
 
     <!-- 🔵 UUID Lookup Card -->
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
-      <h2 class="text-xl font-bold mb-4">🔵 UUID Lookup</h2>
+      <h2 class="text-xl font-bold mb-4">UUID Lookup</h2>
       <input type="text" id="uuidInput" placeholder="Minecraft username" class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white mb-3" />
       <button onclick="getUUID()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">Get UUID</button>
       <div id="uuidOutput" class="mt-4 text-sm"></div>
@@ -50,7 +50,7 @@
 
     <!-- 🟣 Name History Card -->
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
-      <h2 class="text-xl font-bold mb-4">🟣 Name History</h2>
+      <h2 class="text-xl font-bold mb-4">Name History</h2>
       <input type="text" id="historyInput" placeholder="Minecraft username" class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white mb-3" />
       <button onclick="getNameHistory()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg">Get History</button>
       <div id="historyOutput" class="mt-4 text-sm space-y-1"></div>
