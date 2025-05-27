@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minecraft Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    };
+  </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-all duration-300">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center px-6 py-4 shadow bg-white dark:bg-gray-800">
+    <h1 class="text-2xl font-bold">Minecraft Control Panel</h1>
+    <button onclick="toggleDarkMode()" class="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded">
+      🌗 Toggle Dark Mode
+    </button>
+  </header>
+
+  <!-- Main Dashboard Grid -->
+  <main class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+
+    <!-- 🟢 Server Status Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+      <h2 class="text-xl font-bold mb-4">🟢 Server Status Checker</h2>
+      <input type="text" id="serverInput" placeholder="play.example.com" class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white mb-3" />
+      <button onclick="fetchServerStatus()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg">Check Status</button>
+      <div id="outputArea" class="mt-4 text-sm space-y-2"></div>
+    </div>
+
+    <!-- 🟠 Skin Viewer Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+      <h2 class="text-xl font-bold mb-4">🟠 Skin Viewer</h2>
+      <input type="text" id="skinInput" placeholder="Minecraft username" class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white mb-3" />
+      <button onclick="showSkin()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-lg">View Skin</button>
+      <div id="skinOutput" class="mt-4 text-sm text-center"></div>
+    </div>
+
+    <!-- 🔵 UUID Lookup Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+      <h2 class="text-xl font-bold mb-4">🔵 UUID Lookup</h2>
+      <input type="text" id="uuidInput" placeholder="Minecraft username" class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white mb-3" />
+      <button onclick="getUUID()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">Get UUID</button>
+      <div id="uuidOutput" class="mt-4 text-sm"></div>
+    </div>
+
+    <!-- 🟣 Name History Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+      <h2 class="text-xl font-bold mb-4">🟣 Name History</h2>
+      <input type="text" id="historyInput" placeholder="Minecraft username" class="w-full px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white mb-3" />
+      <button onclick="getNameHistory()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg">Get History</button>
+      <div id="historyOutput" class="mt-4 text-sm space-y-1"></div>
+    </div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script>
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+    }
+
+    async function fetchServerStatus() {
+      const server = document.getElementById('serverInput').value.trim();
+      const output = document.getElementById('outputArea');
+      output.innerHTML = '<p class="text-gray-400">Fetching...</p>';
+      if (!server) return output.innerHTML = '<p class="text-red-500">Please enter a server IP.</p>';
+
+      try {
+        const res = await fetch(`https://api.mcstatus.io/v2/status/java/${server}`);
+        const data = await res.json();
+
+        const motd = Array.isArray(data.motd?.clean) ? data.motd.clean.join(" ") : data.motd?.clean || "N/A";
+        const players = `${data.players?.online ?? 0} / ${data.players?.max ?? 0}`;
+        const version = data.version?.name || "Unknown";
+        const ping = data.latency ? `${data.latency} ms` : "N/A";
+        const favicon = data.favicon ? `<img src="${data.favicon}" class="w-16 h-16 rounded mb-2" />` : "";
+        const country = data.geo?.country_name || "N/A";
+
+        output.innerHTML = `
+          ${favicon}
+          <p><strong>Status:</strong> ${data.online ? '✅ Online' : '❌ Offline'}</p>
+          <p><strong>MOTD:</strong> ${motd}</p>
+          <p><strong>Players:</strong> ${players}</p>
+          <p><strong>Version:</strong> ${version}</p>
+          <p><strong>Ping:</strong> ${ping}</p>
+          <p><strong>Country:</strong> ${country}</p>
+        `;
+      } catch (err) {
+        output.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+      }
+    }
+
+    async function showSkin() {
+      const username = document.getElementById('skinInput').value.trim();
+      const output = document.getElementById('skinOutput');
+      if (!username) return output.innerHTML = '<p class="text-red-500">Enter a username.</p>';
+
+      output.innerHTML = `<img src="https://mc-heads.net/body/${username}" class="mx-auto w-32 h-64" alt="Skin of ${username}" />`;
+    }
+
+    async function getUUID() {
+  const username = document.getElementById('uuidInput').value.trim();
+  const output = document.getElementById('uuidOutput');
+  if (!username) return output.innerHTML = '<p class="text-red-500">Enter a username.</p>';
+
+  try {
+    const res = await fetch(`https://playerdb.co/api/player/minecraft/${username}`);
+    const data = await res.json();
+    if (!data.success) throw new Error("User not found");
+
+    const uuid = data.data.player.id;
+    output.innerHTML = `<p><strong>UUID:</strong> ${uuid}</p>`;
+  } catch (err) {
+    output.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+  }
+}
+
+async function getNameHistory() {
+  const username = document.getElementById('historyInput').value.trim();
+  const output = document.getElementById('historyOutput');
+  if (!username) return output.innerHTML = '<p class="text-red-500">Enter a username.</p>';
+
+  try {
+    const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${username}`);
+    if (!res.ok) throw new Error("User not found");
+    const data = await res.json();
+
+    const names = data.username_history;
+    output.innerHTML = names.map(item => {
+      const date = item.changed_at ? new Date(item.changed_at).toLocaleDateString() : "Original";
+      return `• <strong>${item.username}</strong> <span class="text-gray-400">(${date})</span>`;
+    }).join('<br>');
+  } catch (err) {
+    output.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+  }
+}
+
+
+
+  </script>
+
+</body>
+</html>
